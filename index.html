@@ -532,13 +532,20 @@ function renderQuestion(){
   startTimer();
 }
 
-function promoteIfNeeded(){
-  // progression simple : 2 bonnes réponses d'affilée -> niveau suivant
-  if(state.levelIndex < LEVELS.length - 1 && state.streak >= 2){
-    state.levelIndex++;
-    state.streak = 0;
-    showToast("good","Niveau UP 🎉", `Bienvenue chez ${level().name} (${level().pct}%).`);
-  }
+if(ok){
+  const gain = pointsForLevel(level().pct) + Math.floor(state.tLeft);
+  state.score += gain;
+  state.streak += 1;
+
+  btn.style.borderColor = "rgba(46,229,157,.6)";
+  btn.style.background = "rgba(46,229,157,.10)";
+
+  // Level up silencieux AVANT le toast, comme ça le tag est déjà à jour
+  promoteIfNeeded();
+
+  showToast("good","Correct ✅", `${state.current.explain} (+${gain} pts)`);
+}else{
+  // ... (la partie faux ne change pas)
 }
 
 function choose(choiceIndex, btn){
