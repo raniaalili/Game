@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cerveau d’huître → Génie</title>
+  <style>
+    :root{
+      --bg:#0b0d12;
+      --card:#121622;
+      --muted:#a7b0c0;
+      --txt:#eef2ff;
+      --accent:#7c5cff;
+      --good:#2ee59d;
+      --bad:#ff4d6d;
+      --warn:#ffcc00;
+      --line:#232a3a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 800px at 20% 10%, #1a1f33 0%, var(--bg) 60%);
+      color:var(--txt);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      line-height:1.35;
+    }
+    .wrap{
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 22px 16px 48px;
+    }
+    header{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex; gap:10px; align-items:center;
+    }
+    .logo{
+      width:42px;height:42px;border-radius:12px;
+      background: linear-gradient(135deg, var(--accent), #22c1ff);
+      display:grid;place-items:center;
+      box-shadow: 0 10px 24px rgba(124,92,255,.25);
+      font-size:20px;
+    }
+    .title h1{margin:0;font-size:18px;letter-spacing:.2px}
+    .title p{margin:2px 0 0;color:var(--muted);font-size:13px}
+    .hud{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+    }
+    .pill{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      color: var(--muted);
+      display:flex; gap:8px; align-items:center;
+    }
+    .pill b{color:var(--txt); font-weight:600}
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+      position:relative;
+    }
+    .card::after{
+      content:"";
+      position:absolute; inset:-120px -120px auto auto;
+      width:260px;height:260px;border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, rgba(124,92,255,.25), transparent 60%);
+      pointer-events:none;
+      filter: blur(0px);
+    }
+    .row{
+      display:flex; gap:14px; flex-wrap:wrap;
+    }
+    .left{flex: 1 1 520px}
+    .right{flex: 0 0 280px}
+    .sectionTitle{
+      margin:0 0 8px;
+      font-size:13px;
+      color: var(--muted);
+      letter-spacing:.3px;
+      text-transform:uppercase;
+    }
+    .q{
+      font-size:18px;
+      margin: 0 0 14px;
+    }
+    .answers{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    button.answer{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      color: var(--txt);
+      padding: 12px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      text-align:left;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      font-size:14px;
+      min-height: 54px;
+    }
+    button.answer:hover{transform: translateY(-1px); border-color: rgba(124,92,255,.55)}
+    button.answer:disabled{opacity:.75; cursor:not-allowed}
+    .tag{
+      display:inline-flex; align-items:center; gap:6px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size:12px;
+      color: var(--muted);
+    }
+    .levelBox{
+      background: rgba(0,0,0,.20);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .bigLevel{
+      font-size:16px;margin:0 0 4px;
+    }
+    .bigLevel small{color:var(--muted); font-size:12px; font-weight:500}
+    .bar{
+      height:10px;border-radius:999px;
+      background: rgba(255,255,255,.10);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.06);
+      margin-top:10px;
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--accent), #22c1ff);
+      transition: width .25s ease;
+    }
+    .timer{
+      margin-top:10px;
+      display:flex; align-items:center; justify-content:space-between;
+      font-size:12px; color: var(--muted);
+    }
+    .timer b{color: var(--txt)}
+    .ring{
+      width:44px;height:44px;border-radius:50%;
+      border:3px solid rgba(255,255,255,.12);
+      position:relative;
+      display:grid;place-items:center;
+      background: rgba(0,0,0,.18);
+    }
+    .ring::before{
+      content:"";
+      position:absolute; inset:-3px;
+      border-radius:50%;
+      background: conic-gradient(var(--warn) var(--p, 0deg), rgba(255,255,255,.10) 0);
+      mask: radial-gradient(circle, transparent 58%, #000 59%);
+      -webkit-mask: radial-gradient(circle, transparent 58%, #000 59%);
+      transition: background .1s linear;
+    }
+    .ring span{position:relative; font-size:12px; color:var(--txt); font-weight:700}
+    .toast{
+      margin-top:12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      color: var(--muted);
+      display:flex; gap:10px; align-items:flex-start;
+      transform: translateY(6px);
+      opacity:0;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{opacity:1; transform: translateY(0)}
+    .toast.good{border-color: rgba(46,229,157,.35)}
+    .toast.bad{border-color: rgba(255,77,109,.35)}
+    .toast .emoji{font-size:18px; line-height:1}
+    .toast b{color:var(--txt)}
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;
+    }
+    .btn{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: var(--txt);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size:13px;
+    }
+    .btn.primary{background: rgba(124,92,255,.20); border-color: rgba(124,92,255,.50)}
+    .btn.danger{background: rgba(255,77,109,.12); border-color: rgba(255,77,109,.35)}
+    .btn:disabled{opacity:.6; cursor:not-allowed}
+    .fade{
+      animation: fadeIn .22s ease both;
+    }
+    @keyframes fadeIn{from{opacity:0; transform: translateY(4px)} to{opacity:1; transform:none}}
+    @media (max-width:720px){
+      .answers{grid-template-columns:1fr}
+      .right{flex: 1 1 auto}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">🧠</div>
+        <div class="title">
+          <h1>Cerveau d’huître → Génie</h1>
+          <p>Mix “100% logique” + progression de cerveau (fun & cruel).</p>
+        </div>
+      </div>
+      <div class="hud">
+        <div class="pill">Niveau : <b id="lvlPct">100%</b></div>
+        <div class="pill">Score : <b id="score">0</b></div>
+        <div class="pill">Série : <b id="streak">0</b></div>
+      </div>
+    </header>
+
+    <div class="row">
+      <div class="left">
+        <div class="card fade">
+          <div class="tag" id="levelName">🦪 Cerveau d’huître</div>
+          <p class="q" id="question">Chargement…</p>
+
+          <div class="answers" id="answers"></div>
+
+          <div class="toast" id="toast">
+            <div class="emoji" id="toastEmoji">✨</div>
+            <div>
+              <div><b id="toastTitle">Info</b></div>
+              <div id="toastText">…</div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" id="nextBtn" disabled>Question suivante</button>
+            <button class="btn" id="skipBtn">Passer (0 pt)</button>
+            <button class="btn danger" id="resetBtn">Reset run</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="card fade">
+          <div class="sectionTitle">Progression cerveau</div>
+          <div class="levelBox">
+            <p class="bigLevel" id="brainLabel">🦪 Cerveau d’huître <small>(100%)</small></p>
+            <div class="bar"><div id="progressFill"></div></div>
+            <div class="timer">
+              <div>Temps restant : <b id="timeLeft">--</b>s</div>
+              <div class="ring" id="ring"><span id="ringTxt">--</span></div>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="sectionTitle">Règles</div>
+          <div class="pill">4 réponses • 1 bonne • chrono • plus dur = + points</div>
+          <div style="height:10px"></div>
+          <div class="sectionTitle">Mode</div>
+          <div class="actions">
+            <button class="btn" id="modeNormal">Normal</button>
+            <button class="btn" id="modeRush">Rush (chrono -30%)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/** -------------------------
+ *  GAME DATA
+ *  ------------------------- */
+
+// Niveaux = “%” comme 100% logique, avec noms fun
+const LEVELS = [
+  { pct: 100, name: "🦪 Cerveau d’huître", seconds: 18 },
+  { pct: 80,  name: "🧽 Bob l’éponge en PLS", seconds: 16 },
+  { pct: 60,  name: "🧃 Nabilla en contrôle qualité", seconds: 15 },
+  { pct: 40,  name: "🧠 Cerveau humain (ça va)", seconds: 14 },
+  { pct: 25,  name: "🧩 Déduction machine", seconds: 13 },
+  { pct: 10,  name: "🧪 Prof de logique sadique", seconds: 12 },
+  { pct: 1,   name: "👑 Génie (1%)", seconds: 11 },
+];
+
+// Banque de questions (tu peux en ajouter autant que tu veux)
+const QUESTIONS = [
+  // 100–80%
+  {
+    levelPct: 100,
+    q: "Tu as 3 pommes. Tu en prends 2. Combien en as-tu ?",
+    choices: ["1", "2", "3", "0"],
+    answerIndex: 1,
+    explain: "Tu en prends 2 → tu en as 2 (même s’il en reste 1 sur la table)."
+  },
+  {
+    levelPct: 80,
+    q: "Quel mot est différent ?",
+    choices: ["Chat", "Chien", "Poisson", "Chaise"],
+    answerIndex: 3,
+    explain: "Les trois premiers sont des animaux, “Chaise” non."
+  },
+
+  // 60–40%
+  {
+    levelPct: 60,
+    q: "Un père a 30 ans, son fils 10 ans. Dans combien d’années le père aura-t-il le double de l’âge du fils ?",
+    choices: ["5", "10", "15", "20"],
+    answerIndex: 1,
+    explain: "Dans 10 ans : père 40, fils 20 → double."
+  },
+  {
+    levelPct: 40,
+    q: "Il y a 4 bougies allumées. Tu en souffles 1. Combien de bougies restent ?",
+    choices: ["3", "4", "1", "0"],
+    answerIndex: 1,
+    explain: "Elles restent toutes (même si 1 est éteinte)."
+  },
+
+  // 25–10%
+  {
+    levelPct: 25,
+    q: "On te dit : “Cette phrase est fausse.” C’est…",
+    choices: ["Toujours vrai", "Toujours faux", "Un paradoxe", "Une preuve mathématique"],
+    answerIndex: 2,
+    explain: "C’est un paradoxe (type menteur)."
+  },
+  {
+    levelPct: 10,
+    q: "Un escargot est au fond d’un puits de 10 m. Il monte 3 m le jour et redescend 2 m la nuit. En combien de jours sort-il ?",
+    choices: ["8", "10", "7", "9"],
+    answerIndex: 0,
+    explain: "Il progresse de 1 m/jour, mais le dernier jour il sort avant de redescendre : jour 8."
+  },
+
+  // 1%
+  {
+    levelPct: 1,
+    q: "Tu vois une horloge qui indique 3h15. Quel angle entre les aiguilles (le plus petit) ?",
+    choices: ["0°", "7,5°", "15°", "22,5°"],
+    answerIndex: 1,
+    explain: "À 3h15 : minute à 90°. L’heure est à 3,25h → 3,25×30=97,5°. Différence = 7,5°."
+  },
+];
+
+/** -------------------------
+ *  STATE
+ *  ------------------------- */
+const $ = (id)=>document.getElementById(id);
+
+let state = {
+  levelIndex: 0,
+  score: 0,
+  streak: 0,
+  mode: "normal", // or "rush"
+  current: null,
+  locked: false,
+  timer: null,
+  tLeft: 0,
+  tMax: 0,
+};
+
+// simple shuffle
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function level(){
+  return LEVELS[state.levelIndex];
+}
+
+function secondsForLevel(){
+  const base = level().seconds;
+  return state.mode === "rush" ? Math.max(6, Math.floor(base * 0.7)) : base;
+}
+
+/** -------------------------
+ *  RENDER
+ *  ------------------------- */
+function updateHud(){
+  $("lvlPct").textContent = `${level().pct}%`;
+  $("score").textContent = state.score;
+  $("streak").textContent = state.streak;
+
+  const label = `${level().name} (${level().pct}%)`;
+  $("levelName").textContent = level().name;
+  $("brainLabel").innerHTML = `${level().name} <small>(${level().pct}%)</small>`;
+
+  const progress = Math.round((state.levelIndex/(LEVELS.length-1))*100);
+  $("progressFill").style.width = `${progress}%`;
+}
+
+function showToast(type, title, text){
+  const toast = $("toast");
+  toast.classList.remove("good","bad","show");
+  toast.classList.add(type === "good" ? "good" : "bad");
+  $("toastEmoji").textContent = type === "good" ? "✅" : "🕳️";
+  $("toastTitle").textContent = title;
+  $("toastText").textContent = text;
+  requestAnimationFrame(()=>toast.classList.add("show"));
+}
+
+function clearToast(){
+  $("toast").classList.remove("show","good","bad");
+}
+
+function setRing(){
+  const p = state.tMax <= 0 ? 0 : (state.tLeft / state.tMax);
+  const deg = Math.max(0, Math.min(1, p)) * 360;
+  $("ring").style.setProperty("--p", `${deg}deg`);
+  $("ringTxt").textContent = state.tLeft;
+  $("timeLeft").textContent = state.tLeft;
+}
+
+function renderQuestion(){
+  state.locked = false;
+  $("nextBtn").disabled = true;
+  clearToast();
+
+  const pool = QUESTIONS.filter(x => x.levelPct === level().pct);
+  // fallback: nearest easier questions if empty
+  const usable = pool.length ? pool : QUESTIONS.filter(x => x.levelPct >= level().pct).slice(-4);
+  state.current = usable[Math.floor(Math.random() * usable.length)];
+
+  $("question").textContent = state.current.q;
+
+  const answersDiv = $("answers");
+  answersDiv.innerHTML = "";
+
+  state.current.choices.forEach((txt, idx)=>{
+    const btn = document.createElement("button");
+    btn.className = "answer";
+    btn.textContent = txt;
+    btn.onclick = ()=>choose(idx, btn);
+    answersDiv.appendChild(btn);
+  });
+
+  startTimer();
+  updateHud();
+}
+
+function lockAnswers(){
+  [...document.querySelectorAll("button.answer")].forEach(b=>b.disabled = true);
+}
+
+/** -------------------------
+ *  GAME LOGIC
+ *  ------------------------- */
+function pointsForLevelPct(pct){
+  // plus c’est dur, plus ça paye
+  // 100% -> 10 pts, 1% -> 250 pts approx
+  return Math.round(1000 / Math.max(4, pct));
+}
+
+function promoteIfNeeded(){
+  // Monter de niveau si streak >= 2 (rapide et satisfaisant)
+  if(state.levelIndex < LEVELS.length - 1 && state.streak >= 2){
+    state.levelIndex++;
+    state.streak = 0; // reset streak after promotion
+    showToast("good", "Niveau UP 🎉", `Tu passes à ${level().name} (${level().pct}%).`);
+    // petit délai pour le “feel”
+    setTimeout(renderQuestion, 650);
+    return true;
+  }
+  return false;
+}
+
+function choose(choiceIndex, btn){
+  if(state.locked) return;
+  state.locked = true;
+  stopTimer();
+  lockAnswers();
+
+  const ok = (choiceIndex === state.current.answerIndex);
+
+  if(ok){
+    const gain = pointsForLevelPct(level().pct) + Math.floor(state.tLeft * 2);
+    state.score += gain;
+    state.streak += 1;
+    btn.style.borderColor = "rgba(46,229,157,.6)";
+    btn.style.background = "rgba(46,229,157,.10)";
+    showToast("good", "Correct ✅", `${state.current.explain} (+${gain} pts)`);
+  }else{
+    state.streak = 0;
+    btn.style.borderColor = "rgba(255,77,109,.6)";
+    btn.style.background = "rgba(255,77,109,.10)";
+    // highlight correct
+    const buttons = [...document.querySelectorAll("button.answer")];
+    const goodBtn = buttons[state.current.answerIndex];
+    if(goodBtn){
+      goodBtn.style.borderColor = "rgba(46,229,157,.55)";
+      goodBtn.style.background = "rgba(46,229,157,.08)";
+    }
+    showToast("bad", "Tombe dans le trou noir 🕳️", state.current.explain);
+  }
+
+  updateHud();
+  $("nextBtn").disabled = false;
+
+  // auto progression
+  promoteIfNeeded();
+}
+
+function skip(){
+  if(state.locked) return;
+  state.locked = true;
+  stopTimer();
+  lockAnswers();
+  state.streak = 0;
+  showToast("bad", "Passé 😶", "0 point. (Mais tu restes vivant.)");
+  updateHud();
+  $("nextBtn").disabled = false;
+}
+
+function resetRun(){
+  stopTimer();
+  state.levelIndex = 0;
+  state.score = 0;
+  state.streak = 0;
+  state.locked = false;
+  clearToast();
+  renderQuestion();
+}
+
+/** -------------------------
+ *  TIMER
+ *  ------------------------- */
+function startTimer(){
+  stopTimer();
+  state.tMax = secondsForLevel();
+  state.tLeft = state.tMax;
+  setRing();
+
+  state.timer = setInterval(()=>{
+    state.tLeft -= 1;
+    setRing();
+
+    // warning vibe last 5 seconds
+    if(state.tLeft <= 5){
+      $("ring").style.setProperty("--p", `${(state.tLeft/state.tMax)*360}deg`);
+    }
+
+    if(state.tLeft <= 0){
+      stopTimer();
+      // timeout = wrong
+      if(!state.locked){
+        state.locked = true;
+        lockAnswers();
+        state.streak = 0;
+        showToast("bad", "Temps écoulé ⏱️", `La bonne réponse était : "${state.current.choices[state.current.answerIndex]}".`);
+        updateHud();
+        $("nextBtn").disabled = false;
+      }
+    }
+  }, 1000);
+}
+
+function stopTimer(){
+  if(state.timer){
+    clearInterval(state.timer);
+    state.timer = null;
+  }
+}
+
+/** -------------------------
+ *  UI EVENTS
+ *  ------------------------- */
+$("nextBtn").addEventListener("click", renderQuestion);
+$("skipBtn").addEventListener("click", skip);
+$("resetBtn").addEventListener("click", resetRun);
+
+$("modeNormal").addEventListener("click", ()=>{
+  state.mode = "normal";
+  showToast("good","Mode Normal","Chrono standard.");
+  renderQuestion();
+});
+$("modeRush").addEventListener("click", ()=>{
+  state.mode = "rush";
+  showToast("good","Mode Rush","Chrono plus court. Bon courage.");
+  renderQuestion();
+});
+
+/** -------------------------
+ *  START
+ *  ------------------------- */
+updateHud();
+renderQuestion();
+</script>
+</body>
+</html>
