@@ -312,53 +312,36 @@ const LEVELS = [
 ];
 
 const PACKS = [
-  { id:"S1",  name:"Partie 1 — Classiques" },
-  { id:"S2",  name:"Partie 2 — Alphabet" },
-  { id:"S3",  name:"Partie 3 — Mois" },
-  { id:"S4",  name:"Partie 4 — Rimes" },
-  { id:"S10", name:"Partie 10 — Mix" },
+  { id:"S1",  name:"Partie 1" },
+  { id:"S2",  name:"Partie 2" },
+  { id:"S3",  name:"Partie 3" },
 ];
 
 const QUESTIONS = [
-  { id:"S1-100-1", pack:"S1", levelPct:100, q:"Tu as 3 pommes. Tu en prends 2. Combien en as-tu ?", choices:["1","2","3","0"], answerIndex:1, explain:"Tu en prends 2 → tu en as 2." },
-  { id:"S1-80-1",  pack:"S1", levelPct:80,  q:"Quel mot est différent ?", choices:["Chat","Chien","Poisson","Chaise"], answerIndex:3, explain:"Trois animaux, une chaise." },
-  { id:"S1-60-1",  pack:"S1", levelPct:60,  q:"Un père a 30 ans, son fils 10 ans. Dans combien d’années le père aura-t-il le double ?", choices:["5","10","15","20"], answerIndex:1, explain:"Dans 10 ans : 40 et 20." },
-  { id:"S1-40-1",  pack:"S1", levelPct:40,  q:"4 bougies allumées. Tu en souffles 1. Combien de bougies restent ?", choices:["3","4","1","0"], answerIndex:1, explain:"ça se passera mieux la prochaine fois 😬" },
-  { id:"S1-25-1",  pack:"S1", levelPct:25,  q:"“Cette phrase est fausse.” C’est…", choices:["Toujours vrai","Toujours faux","Un paradoxe","Une preuve"], answerIndex:2, explain:"C’est le paradoxe du menteur." },
-  { id:"S1-10-1",  pack:"S1", levelPct:10,  q:"Escargot dans un puits de 10 m. +3 m le jour, -2 m la nuit. En combien de jours sort-il ?", choices:["8","10","7","9"], answerIndex:0, explain:"Jour 8 : il sort avant de redescendre." },
-  { id:"S1-1-1",   pack:"S1", levelPct:1,   q:"Horloge à 3h15. Angle le plus petit entre aiguilles ?", choices:["0°","7,5°","15°","22,5°"], answerIndex:1, explain:"Minute 90°, heure 97,5° → 7,5°." },
+  { id:"S1-100-1", pack:"S1", levelPct:100, q:"Quel mot est différent ?", choices:["Chat","Chien","Cheminée","Cheval"], answerIndex:2, explain:"Trois animaux, une cheminée." },
+  { id:"S1-80-1",  pack:"S1", levelPct:80,  q:"Un père a 30 ans, son fils 10 ans. Dans combien d’années le père aura-t-il le double ?", choices:["5","10","15","20"], answerIndex:1, explain:"Dans 10 ans : 40 et 20." },
+  { id:"S1-60-1",  pack:"S1", levelPct:60,  q:"4 bougies allumées. Tu en souffles 1. Combien de bougies restent ?", choices:["3","4","1","0"], answerIndex:1, explain:"ça se passera mieux la prochaine fois 😬" },
+  { id:"S1-40-1",  pack:"S1", levelPct:40,  q:"Vous participez à une course. Vous doublez le 2eme, vous devenez ... ", choices:["3eme","1er","4eme","2eme"], answerIndex:3, explain:"2eme" },
+  { id:"S1-25-1",  pack:"S1", levelPct:25,  q:"Trouve le point d'interrogation : AC2 EG4 IK8 MO16 ?", choices:["PR32","QS32","PR64","QS64"], answerIndex:1, explain:"On double le chiffre;+4 sur les lettres." },
+  { id:"S1-10-1",  pack:"S1", levelPct:10,  q:"Quel mot complète la liste ? BOIRE - NAITRE - POURRIR", choices:["RAMASSER","STIGMATISER","TRANSPLANTER","VALORISER"], answerIndex:0, explain:"Le nombre de lettres augmente de 1." },
+  { id:"S1-1-1",   pack:"S1", levelPct:1,   q:"Trouve l'intrus", choices:["lebat°","nacaep°","sehica°","utrvioe°"], answerIndex:3, explain:"Table, canapé, chaise, voiture" },
 
-  { id:"S2-100-1", pack:"S2", levelPct:100, q:"Quelle lettre vient juste après A ?", choices:["B","C","Z","AA"], answerIndex:0, explain:"B." },
-  { id:"S2-80-1",  pack:"S2", levelPct:80,  q:"Quel mot contient le plus de lettres ?", choices:["AA","BBB","CCCC","DD"], answerIndex:2, explain:"“CCCC” contient 4 lettres." },
-  { id:"S2-60-1",  pack:"S2", levelPct:60,  q:"Combien y a-t-il de lettres dans l’alphabet français ?", choices:["24","25","26","27"], answerIndex:2, explain:"26." },
-  { id:"S2-40-1",  pack:"S2", levelPct:40,  q:"Quelle lettre est au milieu de l’alphabet (26 lettres) ?", choices:["M","N","M et N","L"], answerIndex:2, explain:"M (13e) et N (14e)." },
-  { id:"S2-25-1",  pack:"S2", levelPct:25,  q:"Quelle suite est correcte ?", choices:["A C B","A B C","B A C","C B A"], answerIndex:1, explain:"A B C." },
-  { id:"S2-10-1",  pack:"S2", levelPct:10,  q:"Quel mot est en ordre alphabétique ?", choices:["BAG","ABE","ACB","BAE"], answerIndex:1, explain:"A-B-E est dans l’ordre." },
-  { id:"S2-1-1",   pack:"S2", levelPct:1,   q:"Dans l’alphabet, combien de positions sont paires (1 à 26) ?", choices:["12","13","14","26"], answerIndex:1, explain:"13 positions paires." },
+  { id:"S2-100-1", pack:"S2", levelPct:100, q:"Quelle lettre est au milieu de l’alphabet (26 lettres) ?", choices:["M","N","M et N","L"], answerIndex:2, explain:"M (13e) et N (14e)." },
+  { id:"S2-80-1",  pack:"S2", levelPct:80,  q:"Quel mois a 28 jours ?", choices:["Février","Tous","Aucun","Janvier"], answerIndex:1, explain:"Tous les mois ont au moins 28 jours." },
+  { id:"S2-60-1",  pack:"S2", levelPct:60,  q:"Combien de A dans “ABRACADABRA” ?", choices:["6","4","5","3"], answerIndex:2, explain:"5." },
+  { id:"S2-40-1",  pack:"S2", levelPct:40,  q:"Pierre a acheté 15 pots de peintures chez le quincaillé, mais ne peut en transporter que 2 à la fois. Combien de fois doit-il aller au magasin?", choices:["7","7,5","8","15"], answerIndex:2, explain:"15/2 = 7,5 mais il ne peut faire un demi trajet." },
+  { id:"S2-25-1",  pack:"S2", levelPct:25,  q:"Deux canards et deux chats ont au total", choices:["8 pattes","12 pattes","14 pattes","16 pattes"], answerIndex:1, explain:"8+4." },
+  { id:"S2-10-1",  pack:"S2", levelPct:10,  q:"Parmi les propositions suivantes, laquelle remplace le point d'interrogation ? Fleuri9 - Loyal12 - Mariage5 - ?", choices:["Parier14","Rond7","Sérum12","Vu21"], answerIndex:3, explain:"Le nombre correspond à la place de la dernière lettre du mot dans l'alphabet." },
+  { id:"S2-1-1",   pack:"S2", levelPct:1,   q:"Quelle proposition complète la suite logique? 2 - 3 - 8 - ?", choices:["12","37","48","63"], answerIndex:3, explain:"n*n-1." },
 
-  { id:"S3-100-1", pack:"S3", levelPct:100, q:"Quel mois vient après janvier ?", choices:["Février","Décembre","Mars","Juin"], answerIndex:0, explain:"Février." },
-  { id:"S3-80-1",  pack:"S3", levelPct:80,  q:"Quel mois a 28 jours ?", choices:["Février","Tous","Aucun","Janvier"], answerIndex:1, explain:"Tous les mois ont au moins 28 jours." },
-  { id:"S3-60-1",  pack:"S3", levelPct:60,  q:"Combien de mois ont 31 jours ?", choices:["5","6","7","8"], answerIndex:2, explain:"7 mois." },
-  { id:"S3-40-1",  pack:"S3", levelPct:40,  q:"Quel est le 9e mois ?", choices:["Août","Septembre","Octobre","Juillet"], answerIndex:1, explain:"Septembre." },
-  { id:"S3-25-1",  pack:"S3", levelPct:25,  q:"Quel mois contient la lettre “é” ?", choices:["Février","Avril","Mai","Juin"], answerIndex:0, explain:"Février." },
-  { id:"S3-10-1",  pack:"S3", levelPct:10,  q:"Quel mois a exactement 4 lettres ?", choices:["Mars","Juin","Août","Mai"], answerIndex:0, explain:"Mars = 4 lettres." },
-  { id:"S3-1-1",   pack:"S3", levelPct:1,   q:"Combien de lettres dans “septembre” ?", choices:["8","9","10","11"], answerIndex:2, explain:"septembre = 10 lettres." },
+  { id:"S3-100-1", pack:"S3", levelPct:100, q:"Combien de mois ont 31 jours ?", choices:["5","6","7","8"], answerIndex:2, explain:"7 mois." },
+  { id:"S3-80-1",  pack:"S3", levelPct:80,  q:"Dans une course, vous avez 5 places d'avance sur l'avant-dernier, mais 3 places de retard sur le deuxième. Combien y-a-t-il de coureurs ?", choices:["9","10","11","12"], answerIndex:2, explain:"Tu es à la 5eme place." },
+  { id:"S3-60-1",  pack:"S3", levelPct:60,  q:"Cette année, il y a eu 5 lundis, 5 mardis et 5 mercredis en janvier. Quel jour tombe le 1er février ?", choices:["Lundi","Mercredi","Jeudi","Dimanche"], answerIndex:2, explain:"1er janvier est un lundi." },
+  { id:"S3-40-1",  pack:"S3", levelPct:40,  q:"Maçon est à maison ce que boulanger est à :", choices:["Farine","Levure","Pain","Blé"], answerIndex:3, explain:"Rime." },
+  { id:"S3-25-1",  pack:"S3", levelPct:25,  q:"Quelle lettre est à la place du point d'interrogation ? U - D - T - Q - C - S - S - H - ?", choices:["D","N","O","T"], answerIndex:1, explain:"Neuf." },
+  { id:"S3-10-1",  pack:"S3", levelPct:10,  q:"Parmi les réponses suivantes, laquelle remplace X ? ANTENNE - NENUPHAR - X - CIERGE", choices:["AUTARCHE","PHARAON","PHARMACIE","PHARMACIEN"], answerIndex:2, explain:"Dernière syllabe du mot précédent, première syllabe du mot suivant." },
+  { id:"S3-1-1",   pack:"S3", levelPct:1,   q:"Quel élément complète la suite ? DIKA - EKNE - FMQE - ?", choices:["GHUY","GOAQ","GOTM","GRIP"], answerIndex:2, explain:"Chaque colonne de lettre augmente en considérant A=1 ...." },
 
-  { id:"S4-100-1", pack:"S4", levelPct:100, q:"Quel mot rime le mieux avec “chat” ?", choices:["plat","chou","chien","lune"], answerIndex:0, explain:"chat / plat." },
-  { id:"S4-80-1",  pack:"S4", levelPct:80,  q:"Quel mot rime avec “manger” ?", choices:["danger","montagne","manteau","mardi"], answerIndex:0, explain:"manger / danger." },
-  { id:"S4-60-1",  pack:"S4", levelPct:60,  q:"Quel mot rime avec “Paris” ?", choices:["souris","pardon","pays","parfait"], answerIndex:0, explain:"Paris / souris." },
-  { id:"S4-40-1",  pack:"S4", levelPct:40,  q:"Dans quelle paire les deux mots riment ?", choices:["mer / mur","chat / chaud","lait / laid","pied / peur"], answerIndex:2, explain:"lait / laid (même son)." },
-  { id:"S4-25-1",  pack:"S4", levelPct:25,  q:"Quel mot NE rime PAS avec “beau” ?", choices:["bateau","niveau","cadeau","chaud"], answerIndex:1, explain:"niveau ≠ beau (son différent)." },
-  { id:"S4-10-1",  pack:"S4", levelPct:10,  q:"Quel mot rime avec “orange” ?", choices:["ange","mange","aucun","range"], answerIndex:2, explain:"Piège : rien ne rime parfaitement avec “orange” (standard)." },
-  { id:"S4-1-1",   pack:"S4", levelPct:1,   q:"Quel couple a exactement le même son final ?", choices:["temps / tant","vers / verre","mais / met","deux / due"], answerIndex:1, explain:"vers / verre (homophones)." },
-
-  { id:"S10-100-1", pack:"S10", levelPct:100, q:"Si tu doubles 5, tu obtiens…", choices:["10","12","15","20"], answerIndex:0, explain:"10." },
-  { id:"S10-80-1",  pack:"S10", levelPct:80,  q:"Quel nombre manque : 2, 4, 6, __ ?", choices:["7","8","9","10"], answerIndex:1, explain:"+2." },
-  { id:"S10-60-1",  pack:"S10", levelPct:60,  q:"Lequel est un palindrome ?", choices:["kayak","bonjour","paris","table"], answerIndex:0, explain:"kayak." },
-  { id:"S10-40-1",  pack:"S10", levelPct:40,  q:"10 bonbons, tu en donnes 10. Il reste…", choices:["0","10","1","Ça dépend"], answerIndex:0, explain:"0." },
-  { id:"S10-25-1",  pack:"S10", levelPct:25,  q:"Quel mot est le plus long ?", choices:["long","plus long","le plus long","longueur"], answerIndex:2, explain:"“le plus long” (piège)." },
-  { id:"S10-10-1",  pack:"S10", levelPct:10,  q:"Quel jour vient 2 jours après lundi ?", choices:["Mardi","Mercredi","Jeudi","Dimanche"], answerIndex:1, explain:"Mercredi." },
-  { id:"S10-1-1",   pack:"S10", levelPct:1,   q:"Combien de A dans “ABRACADABRA” ?", choices:["4","5","6","7"], answerIndex:2, explain:"6." },
 ];
 
 /* ========= Helpers ========= */
@@ -834,7 +817,7 @@ function choose(choiceIndex, btn){
         endRun({
           kind: "win",
           title: "Trop fort le S ! 😎",
-          sub: "T’as terminé la run.",
+          sub: "Exceptionnel !",
           scoreText: `${state.score} pts`
         });
       }, 650);
@@ -867,7 +850,7 @@ autoNext();
       endRun({
         kind: "lose",
         title: "Aïe, aïe, aïe",
-        sub: "Run terminée (1 erreur = fin).",
+        sub: "Ca ira mieux la prochaine fois...",
         scoreText: `${state.score} pts`
       });
     }, 650);
@@ -889,7 +872,7 @@ function timeoutFail(){
     endRun({
       kind: "lose",
       title: "Temps écoulé ⏱️",
-      sub: "Run terminée (1 erreur = fin).",
+      sub: "Accélère si tu veux gagner ...",
       scoreText: `${state.score} pts`
     });
   }, 650);
