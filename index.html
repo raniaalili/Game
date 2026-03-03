@@ -220,7 +220,8 @@
       </div>
 
       <div class="actions">
-        <button class="btn primary" id="nextBtn" disabled>Question suivante</button>
+        <!-- Modif #3: bouton "Question suivante" masqué (auto-next) -->
+        <button class="btn primary" id="nextBtn" disabled style="display:none">Question suivante</button>
         <button class="btn" id="giveUpBtn">give up 🫠</button>
         <button class="btn danger" id="resetBtn">Reset</button>
       </div>
@@ -286,7 +287,7 @@ const QUESTIONS = [
   { id:"S4-10-1",  pack:"S4", levelPct:10,  q:"Quel mot rime avec “orange” ?", choices:["ange","mange","aucun","range"], answerIndex:2, explain:"Piège : rien ne rime parfaitement avec “orange” (standard)." },
   { id:"S4-1-1",   pack:"S4", levelPct:1,   q:"Quel couple a exactement le même son final ?", choices:["temps / tant","vers / verre","mais / met","deux / due"], answerIndex:1, explain:"vers / verre (homophones)." },
 
-  // S10 Mix fallback
+  // S10 Mix fallback (quelques)
   { id:"S10-100-1", pack:"S10", levelPct:100, q:"Si tu doubles 5, tu obtiens…", choices:["10","12","15","20"], answerIndex:0, explain:"10." },
   { id:"S10-80-1",  pack:"S10", levelPct:80,  q:"Quel nombre manque : 2, 4, 6, __ ?", choices:["7","8","9","10"], answerIndex:1, explain:"+2." },
   { id:"S10-60-1",  pack:"S10", levelPct:60,  q:"Lequel est un palindrome ?", choices:["kayak","bonjour","paris","table"], answerIndex:0, explain:"kayak." },
@@ -401,16 +402,37 @@ function startTimer(){
   }, 1000);
 }
 
+/* ==============================
+   Modif #2: Pool robuste
+   - pack+level
+   - complète avec mix (S10)
+   - complète avec toutes les questions du niveau
+   - évite répétition / boucle sur la même
+============================== */
 function getPool(){
-  const packQs = QUESTIONS.filter(q => q.pack === state.packId && q.levelPct === level().pct);
-  if(packQs.length) return packQs;
-  // fallback: mix pack
-  return QUESTIONS.filter(q => q.pack === "S10" && q.levelPct === level().pct);
+  const pct = level().pct;
+
+  const inPack = QUESTIONS.filter(q => q.pack === state.packId && q.levelPct === pct);
+  const inMix  = QUESTIONS.filter(q => q.pack === "S10" && q.levelPct === pct);
+  const allLvl = QUESTIONS.filter(q => q.levelPct === pct);
+
+  let pool = [...inPack];
+
+  const addIfMissing = (arr) => {
+    for (const q of arr){
+      if (!pool.some(x => x.id === q.id)) pool.push(q);
+      if (pool.length >= 6) break;
+    }
+  };
+
+  if (pool.length < 3) addIfMissing(inMix);
+  if (pool.length < 3) addIfMissing(allLvl);
+
+  return pool;
 }
 
 function renderQuestion(){
   state.locked = false;
-  $("nextBtn").disabled = true;
   clearToast();
 
   const pool = getPool();
@@ -421,7 +443,6 @@ function renderQuestion(){
   if(!q){
     $("question").textContent = "Pas de questions pour ce niveau. (On va en ajouter 😈)";
     $("answers").innerHTML = "";
-    $("nextBtn").disabled = false;
     return;
   }
 
@@ -442,7 +463,6 @@ function renderQuestion(){
 }
 
 function promoteSilently(){
-  // 2 bonnes d'affilée => niveau suivant, sans toast supplémentaire
   if(state.levelIndex < LEVELS.length - 1 && state.streak >= 2){
     state.levelIndex++;
     state.streak = 0;
@@ -456,6 +476,18 @@ function drama(){
   void card.offsetWidth;
   card.classList.add("shake");
   playDramaticFail();
+}
+
+/* ==============================
+   Modif #1: Auto-next
+   - après une réponse (vrai/faux/timeout/give up)
+   - on enchaîne automatiquement
+============================== */
+function autoNext(){
+  // 650ms = laisse le temps de lire "Correct" ou "Aïe"
+  setTimeout(() => {
+    renderQuestion();
+  }, 650);
 }
 
 function choose(choiceIndex, btn){
@@ -474,9 +506,7 @@ function choose(choiceIndex, btn){
     btn.style.borderColor = "rgba(46,229,157,.6)";
     btn.style.background = "rgba(46,229,157,.10)";
 
-    // Level up silencieux (pas de 2e message, pas de double clic)
     promoteSilently();
-
     showToast("good","Correct ✅", `${state.current.explain} (+${gain} pts)`);
   }else{
     state.streak = 0;
@@ -496,7 +526,7 @@ function choose(choiceIndex, btn){
   }
 
   updateHud();
-  $("nextBtn").disabled = false;
+  autoNext();
 }
 
 function timeoutFail(){
@@ -508,7 +538,7 @@ function timeoutFail(){
   drama();
   showToast("bad","Aïe, aïe, aïe", `Temps écoulé ⏱️ (Réponse : "${good}")`);
   updateHud();
-  $("nextBtn").disabled = false;
+  autoNext();
 }
 
 function giveUp(){
@@ -519,7 +549,7 @@ function giveUp(){
   state.streak = 0;
   showToast("bad","give up 🫠", "Ok. On passe à la suivante.");
   updateHud();
-  $("nextBtn").disabled = false;
+  autoNext();
 }
 
 function resetRun(){
@@ -554,7 +584,6 @@ function start(){
   updateHud();
   renderQuestion();
 
-  $("nextBtn").addEventListener("click", renderQuestion);
   $("giveUpBtn").addEventListener("click", giveUp);
   $("resetBtn").addEventListener("click", resetRun);
 
