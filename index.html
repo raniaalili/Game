@@ -468,6 +468,31 @@ function playBeep(){
   }catch(e){}
 }
 
+function playCorrectDing(){
+  if(!soundOn) return;
+  try{
+    initAudio();
+    const t = audioCtx.currentTime;
+
+    // petit "ding" : 2 notes rapides (type UI satisfaisante)
+    const freqs = [880, 1174.66]; // A5 -> D6
+    freqs.forEach((f, i) => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t + i * 0.03);
+
+      g.gain.setValueAtTime(0.0001, t + i * 0.03);
+      g.gain.exponentialRampToValueAtTime(0.14, t + i * 0.03 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.03 + 0.12);
+
+      o.connect(g).connect(audioCtx.destination);
+      o.start(t + i * 0.03);
+      o.stop(t + i * 0.03 + 0.13);
+    });
+  }catch(e){}
+}
+
 function playLoseMelodrama(){
   if(!soundOn) return;
   try{
@@ -742,9 +767,10 @@ function choose(choiceIndex, btn){
     }
 
     promoteSilently();
-    showToast("good","Correct ✅", `${state.current.explain} (+${gain} pts)`);
-    updateHud();
-    autoNext();
+showToast("good","Correct ✅", `${state.current.explain} (+${gain} pts)`);
+if(level().pct !== 1) playCorrectDing();
+updateHud();
+autoNext();
   }else{
     state.streak = 0;
 
