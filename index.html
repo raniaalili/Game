@@ -395,35 +395,77 @@ function playTick(){
     initAudio();
     const t = audioCtx.currentTime;
 
+    // "tic" plus rond : triangle + mini enveloppe
     const o = audioCtx.createOscillator();
     const g = audioCtx.createGain();
-    o.type = "square";
-    o.frequency.setValueAtTime(1200, t);
 
+    o.type = "triangle";
+    // fréquence variable: plus grave au début, un peu plus haute à la fin
+    const prog = 1 - (state.tLeft / state.tMax); // 0 -> 1
+    const freq = 520 + prog * 180;               // 520 -> 700
+    o.frequency.setValueAtTime(freq, t);
+
+    // enveloppe très courte (pas de "clac" violent)
     g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.07, t + 0.005);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.10, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
 
     o.connect(g).connect(audioCtx.destination);
     o.start(t);
-    o.stop(t + 0.035);
+    o.stop(t + 0.08);
   }catch(e){}
 }
 
 function startTicking(){
   stopTicking();
+
   const loop = () => {
     if(state.gameOver || state.locked || !soundOn) return;
 
-    const prog = 1 - (state.tLeft / state.tMax); // 0 -> 1
-    let delay = 650 - prog * 530;               // 650ms -> 120ms
-    delay = Math.max(120, Math.min(650, delay));
-    if(state.tLeft <= 3) delay = 110;
-
+    // tic
     playTick();
+
+    // rythme TV :
+    // - au début : 1 tic / seconde
+    // - ensuite : accélère doucement
+    // - dernières secondes : plus pressant
+    let delay = 1000;
+
+    if(state.tLeft <= 5){
+      delay = 420;               // stress TV
+    } else if(state.tLeft <= 8){
+      delay = 700;
+    } else if(state.tLeft <= 12){
+      delay = 900;
+    } else {
+      delay = 1000;
+    }
+
     tickTimer = setTimeout(loop, delay);
   };
+
   loop();
+}
+
+function playBeep(){
+  if(!soundOn) return;
+  try{
+    initAudio();
+    const t = audioCtx.currentTime;
+
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = "sine";
+    o.frequency.setValueAtTime(1100, t);
+
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.12, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+
+    o.connect(g).connect(audioCtx.destination);
+    o.start(t);
+    o.stop(t + 0.13);
+  }catch(e){}
 }
 
 function playLoseMelodrama(){
@@ -565,6 +607,9 @@ function startTimer(){
 
   state.timer = setInterval(()=>{
     state.tLeft -= 1;
+    if(state.tLeft <= 3 && state.tLeft > 0){
+  playBeep();
+  }
     setRing();
     if(state.tLeft <= 0){
       stopTimer();
