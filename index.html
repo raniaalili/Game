@@ -45,7 +45,6 @@
       font-size:20px;
       flex:0 0 auto;
     }
-    /* on garde h1 au cas où, mais on n'en met plus dans le HTML */
     h1{margin:0;font-size:18px;letter-spacing:.6px}
     .hud{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
     .pill{
@@ -59,6 +58,18 @@
       white-space:nowrap;
     }
     .pill b{color:var(--txt); font-weight:800}
+
+    /* bouton son (compact, même style pill) */
+    .soundBtn{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      color: var(--txt);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      cursor:pointer;
+    }
+    .soundBtn:active{transform:scale(.99)}
 
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
@@ -184,7 +195,6 @@
       100%{transform:translateX(0)}
     }
 
-    /* ===== Overlay fin de partie (même esthétique) ===== */
     .overlay{
       position:fixed;
       inset:0;
@@ -235,9 +245,9 @@
     <header>
       <div class="brand">
         <div class="logo">🧠</div>
-        <!-- plus de titre -->
       </div>
       <div class="hud">
+        <button class="soundBtn" id="soundBtn" aria-label="Activer/désactiver le son">🔊</button>
         <div class="pill">Niveau <b id="lvlPct">100%</b></div>
         <div class="pill">Score <b id="score">0</b></div>
       </div>
@@ -266,7 +276,6 @@
       </div>
 
       <div class="actions">
-        <!-- bouton next toujours masqué -->
         <button class="btn primary" id="nextBtn" disabled style="display:none">Question suivante</button>
         <button class="btn" id="giveUpBtn">give up 🫠</button>
         <button class="btn danger" id="resetBtn">Reset</button>
@@ -274,7 +283,6 @@
     </div>
   </div>
 
-  <!-- FIN DE PARTIE -->
   <div class="overlay" id="overlay">
     <div class="modal">
       <div class="title" id="endTitle">Terminé.</div>
@@ -312,7 +320,6 @@ const PACKS = [
 ];
 
 const QUESTIONS = [
-  // S1
   { id:"S1-100-1", pack:"S1", levelPct:100, q:"Tu as 3 pommes. Tu en prends 2. Combien en as-tu ?", choices:["1","2","3","0"], answerIndex:1, explain:"Tu en prends 2 → tu en as 2." },
   { id:"S1-80-1",  pack:"S1", levelPct:80,  q:"Quel mot est différent ?", choices:["Chat","Chien","Poisson","Chaise"], answerIndex:3, explain:"Trois animaux, une chaise." },
   { id:"S1-60-1",  pack:"S1", levelPct:60,  q:"Un père a 30 ans, son fils 10 ans. Dans combien d’années le père aura-t-il le double ?", choices:["5","10","15","20"], answerIndex:1, explain:"Dans 10 ans : 40 et 20." },
@@ -321,7 +328,6 @@ const QUESTIONS = [
   { id:"S1-10-1",  pack:"S1", levelPct:10,  q:"Escargot dans un puits de 10 m. +3 m le jour, -2 m la nuit. En combien de jours sort-il ?", choices:["8","10","7","9"], answerIndex:0, explain:"Jour 8 : il sort avant de redescendre." },
   { id:"S1-1-1",   pack:"S1", levelPct:1,   q:"Horloge à 3h15. Angle le plus petit entre aiguilles ?", choices:["0°","7,5°","15°","22,5°"], answerIndex:1, explain:"Minute 90°, heure 97,5° → 7,5°." },
 
-  // S2 Alphabet
   { id:"S2-100-1", pack:"S2", levelPct:100, q:"Quelle lettre vient juste après A ?", choices:["B","C","Z","AA"], answerIndex:0, explain:"B." },
   { id:"S2-80-1",  pack:"S2", levelPct:80,  q:"Quel mot contient le plus de lettres ?", choices:["AA","BBB","CCCC","DD"], answerIndex:2, explain:"“CCCC” contient 4 lettres." },
   { id:"S2-60-1",  pack:"S2", levelPct:60,  q:"Combien y a-t-il de lettres dans l’alphabet français ?", choices:["24","25","26","27"], answerIndex:2, explain:"26." },
@@ -330,7 +336,6 @@ const QUESTIONS = [
   { id:"S2-10-1",  pack:"S2", levelPct:10,  q:"Quel mot est en ordre alphabétique ?", choices:["BAG","ABE","ACB","BAE"], answerIndex:1, explain:"A-B-E est dans l’ordre." },
   { id:"S2-1-1",   pack:"S2", levelPct:1,   q:"Dans l’alphabet, combien de positions sont paires (1 à 26) ?", choices:["12","13","14","26"], answerIndex:1, explain:"13 positions paires." },
 
-  // S3 Mois
   { id:"S3-100-1", pack:"S3", levelPct:100, q:"Quel mois vient après janvier ?", choices:["Février","Décembre","Mars","Juin"], answerIndex:0, explain:"Février." },
   { id:"S3-80-1",  pack:"S3", levelPct:80,  q:"Quel mois a 28 jours ?", choices:["Février","Tous","Aucun","Janvier"], answerIndex:1, explain:"Tous les mois ont au moins 28 jours." },
   { id:"S3-60-1",  pack:"S3", levelPct:60,  q:"Combien de mois ont 31 jours ?", choices:["5","6","7","8"], answerIndex:2, explain:"7 mois." },
@@ -339,7 +344,6 @@ const QUESTIONS = [
   { id:"S3-10-1",  pack:"S3", levelPct:10,  q:"Quel mois a exactement 4 lettres ?", choices:["Mars","Juin","Août","Mai"], answerIndex:0, explain:"Mars = 4 lettres." },
   { id:"S3-1-1",   pack:"S3", levelPct:1,   q:"Combien de lettres dans “septembre” ?", choices:["8","9","10","11"], answerIndex:2, explain:"septembre = 10 lettres." },
 
-  // S4 Rimes
   { id:"S4-100-1", pack:"S4", levelPct:100, q:"Quel mot rime le mieux avec “chat” ?", choices:["plat","chou","chien","lune"], answerIndex:0, explain:"chat / plat." },
   { id:"S4-80-1",  pack:"S4", levelPct:80,  q:"Quel mot rime avec “manger” ?", choices:["danger","montagne","manteau","mardi"], answerIndex:0, explain:"manger / danger." },
   { id:"S4-60-1",  pack:"S4", levelPct:60,  q:"Quel mot rime avec “Paris” ?", choices:["souris","pardon","pays","parfait"], answerIndex:0, explain:"Paris / souris." },
@@ -348,7 +352,6 @@ const QUESTIONS = [
   { id:"S4-10-1",  pack:"S4", levelPct:10,  q:"Quel mot rime avec “orange” ?", choices:["ange","mange","aucun","range"], answerIndex:2, explain:"Piège : rien ne rime parfaitement avec “orange” (standard)." },
   { id:"S4-1-1",   pack:"S4", levelPct:1,   q:"Quel couple a exactement le même son final ?", choices:["temps / tant","vers / verre","mais / met","deux / due"], answerIndex:1, explain:"vers / verre (homophones)." },
 
-  // S10 Mix fallback
   { id:"S10-100-1", pack:"S10", levelPct:100, q:"Si tu doubles 5, tu obtiens…", choices:["10","12","15","20"], answerIndex:0, explain:"10." },
   { id:"S10-80-1",  pack:"S10", levelPct:80,  q:"Quel nombre manque : 2, 4, 6, __ ?", choices:["7","8","9","10"], answerIndex:1, explain:"+2." },
   { id:"S10-60-1",  pack:"S10", levelPct:60,  q:"Lequel est un palindrome ?", choices:["kayak","bonjour","paris","table"], answerIndex:0, explain:"kayak." },
@@ -369,35 +372,137 @@ function pickRandom(arr, lastId){
   return pool[Math.floor(Math.random()*pool.length)];
 }
 
-/* ========= Audio (dramatic fail) ========= */
+/* ========= AUDIO ========= */
 let audioCtx = null;
-function ensureAudio(){
+let tickTimer = null;
+let soundOn = true;
+
+function initAudio(){
   if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if(audioCtx.state === "suspended") audioCtx.resume();
 }
-function playDramaticFail(){
-  try{
-    ensureAudio();
-    const t = audioCtx.currentTime;
-    const o1 = audioCtx.createOscillator(), g1 = audioCtx.createGain();
-    o1.type="sine";
-    o1.frequency.setValueAtTime(120,t);
-    o1.frequency.exponentialRampToValueAtTime(60,t+0.25);
-    g1.gain.setValueAtTime(0.0001,t);
-    g1.gain.exponentialRampToValueAtTime(0.35,t+0.02);
-    g1.gain.exponentialRampToValueAtTime(0.0001,t+0.28);
-    o1.connect(g1).connect(audioCtx.destination);
-    o1.start(t); o1.stop(t+0.3);
 
-    const o2 = audioCtx.createOscillator(), g2 = audioCtx.createGain();
-    o2.type="triangle";
-    o2.frequency.setValueAtTime(700,t+0.02);
-    o2.frequency.exponentialRampToValueAtTime(330,t+0.18);
-    g2.gain.setValueAtTime(0.0001,t);
-    g2.gain.exponentialRampToValueAtTime(0.18,t+0.04);
-    g2.gain.exponentialRampToValueAtTime(0.0001,t+0.22);
-    o2.connect(g2).connect(audioCtx.destination);
-    o2.start(t); o2.stop(t+0.24);
+function stopTicking(){
+  if(tickTimer){
+    clearTimeout(tickTimer);
+    tickTimer = null;
+  }
+}
+
+function playTick(){
+  if(!soundOn) return;
+  try{
+    initAudio();
+    const t = audioCtx.currentTime;
+
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = "square";
+    o.frequency.setValueAtTime(1200, t);
+
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.07, t + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.03);
+
+    o.connect(g).connect(audioCtx.destination);
+    o.start(t);
+    o.stop(t + 0.035);
+  }catch(e){}
+}
+
+function startTicking(){
+  stopTicking();
+  const loop = () => {
+    if(state.gameOver || state.locked || !soundOn) return;
+
+    const prog = 1 - (state.tLeft / state.tMax); // 0 -> 1
+    let delay = 650 - prog * 530;               // 650ms -> 120ms
+    delay = Math.max(120, Math.min(650, delay));
+    if(state.tLeft <= 3) delay = 110;
+
+    playTick();
+    tickTimer = setTimeout(loop, delay);
+  };
+  loop();
+}
+
+function playLoseMelodrama(){
+  if(!soundOn) return;
+  try{
+    initAudio();
+    const t = audioCtx.currentTime;
+
+    // boom grave
+    const boom = audioCtx.createOscillator();
+    const bg = audioCtx.createGain();
+    boom.type = "sine";
+    boom.frequency.setValueAtTime(90, t);
+    boom.frequency.exponentialRampToValueAtTime(40, t + 0.35);
+
+    bg.gain.setValueAtTime(0.0001, t);
+    bg.gain.exponentialRampToValueAtTime(0.35, t + 0.02);
+    bg.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+
+    boom.connect(bg).connect(audioCtx.destination);
+    boom.start(t);
+    boom.stop(t + 0.5);
+
+    // accord triste qui descend
+    const freqs = [440, 349.23, 261.63];
+    freqs.forEach((f, i) => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t + 0.02);
+      o.frequency.exponentialRampToValueAtTime(f * 0.72, t + 0.75);
+
+      g.gain.setValueAtTime(0.0001, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.12, t + 0.06);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.85);
+
+      o.connect(g).connect(audioCtx.destination);
+      o.start(t + 0.02 + i * 0.03);
+      o.stop(t + 0.9);
+    });
+  }catch(e){}
+}
+
+function playWinHappy(){
+  if(!soundOn) return;
+  try{
+    initAudio();
+    const t = audioCtx.currentTime;
+
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+    notes.forEach((f, i) => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = "triangle";
+      o.frequency.setValueAtTime(f, t + i * 0.09);
+
+      g.gain.setValueAtTime(0.0001, t + i * 0.09);
+      g.gain.exponentialRampToValueAtTime(0.18, t + i * 0.09 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.09 + 0.14);
+
+      o.connect(g).connect(audioCtx.destination);
+      o.start(t + i * 0.09);
+      o.stop(t + i * 0.09 + 0.16);
+    });
+
+    // sparkle
+    const s = audioCtx.createOscillator();
+    const sg = audioCtx.createGain();
+    s.type = "sine";
+    s.frequency.setValueAtTime(1400, t + 0.42);
+    s.frequency.exponentialRampToValueAtTime(2200, t + 0.55);
+
+    sg.gain.setValueAtTime(0.0001, t + 0.42);
+    sg.gain.exponentialRampToValueAtTime(0.12, t + 0.46);
+    sg.gain.exponentialRampToValueAtTime(0.0001, t + 0.62);
+
+    s.connect(sg).connect(audioCtx.destination);
+    s.start(t + 0.42);
+    s.stop(t + 0.65);
   }catch(e){}
 }
 
@@ -447,6 +552,7 @@ function lockAnswers(){
 
 function stopTimer(){
   if(state.timer){ clearInterval(state.timer); state.timer=null; }
+  stopTicking();
 }
 
 function startTimer(){
@@ -454,6 +560,9 @@ function startTimer(){
   state.tMax = FIXED_SECONDS;
   state.tLeft = FIXED_SECONDS;
   setRing();
+
+  startTicking();
+
   state.timer = setInterval(()=>{
     state.tLeft -= 1;
     setRing();
@@ -533,14 +642,16 @@ function drama(){
   card.classList.remove("shake");
   void card.offsetWidth;
   card.classList.add("shake");
-  playDramaticFail();
 }
 
 /* ===== Fin de partie ===== */
-function endRun({title, sub, scoreText}){
+function endRun({kind, title, sub, scoreText}){
   state.gameOver = true;
   stopTimer();
   lockAnswers();
+
+  if(kind === "win") playWinHappy();
+  else playLoseMelodrama();
 
   $("endTitle").textContent = title;
   $("endSub").textContent = sub;
@@ -570,12 +681,13 @@ function choose(choiceIndex, btn){
     btn.style.borderColor = "rgba(46,229,157,.6)";
     btn.style.background = "rgba(46,229,157,.10)";
 
-    // ✅ Si on est au 1% et qu'on répond juste : WIN + STOP
+    // WIN au 1%
     if(level().pct === 1){
       showToast("good","Correct ✅", `${state.current.explain} (+${gain} pts)`);
       updateHud();
       setTimeout(() => {
         endRun({
+          kind: "win",
           title: "Trop fort le S ! 😎",
           sub: "T’as terminé la run.",
           scoreText: `${state.score} pts`
@@ -605,9 +717,9 @@ function choose(choiceIndex, btn){
     showToast("bad","Aïe, aïe, aïe", state.current.explain);
     updateHud();
 
-    // ✅ Erreur = STOP + score final
     setTimeout(() => {
       endRun({
+        kind: "lose",
         title: "Aïe, aïe, aïe",
         sub: "Run terminée (1 erreur = fin).",
         scoreText: `${state.score} pts`
@@ -627,9 +739,9 @@ function timeoutFail(){
   showToast("bad","Aïe, aïe, aïe", `Temps écoulé ⏱️ (Réponse : "${good}")`);
   updateHud();
 
-  // ✅ Timeout = STOP + score final
   setTimeout(() => {
     endRun({
+      kind: "lose",
       title: "Temps écoulé ⏱️",
       sub: "Run terminée (1 erreur = fin).",
       scoreText: `${state.score} pts`
@@ -645,7 +757,7 @@ function giveUp(){
   state.streak = 0;
   showToast("bad","give up 🫠", "Ok. On passe à la suivante.");
   updateHud();
-  autoNext(); // give up ne termine pas la run
+  autoNext();
 }
 
 function resetRun(){
@@ -679,6 +791,12 @@ function initPacks(){
   });
 }
 
+function toggleSound(){
+  soundOn = !soundOn;
+  $("soundBtn").textContent = soundOn ? "🔊" : "🔇";
+  if(!soundOn) stopTicking();
+}
+
 function start(){
   initPacks();
   updateHud();
@@ -690,8 +808,13 @@ function start(){
   $("replayBtn").addEventListener("click", resetRun);
   $("closeBtn").addEventListener("click", () => $("overlay").classList.remove("show"));
 
+  $("soundBtn").addEventListener("click", (e)=>{
+    e.stopPropagation();
+    toggleSound();
+  });
+
   // iOS: autoriser audio au premier tap
-  document.addEventListener("pointerdown", ()=>{ try{ ensureAudio(); }catch(e){} }, {once:true});
+  document.addEventListener("pointerdown", ()=>{ try{ initAudio(); }catch(e){} }, {once:true});
 }
 
 document.addEventListener("DOMContentLoaded", start);
