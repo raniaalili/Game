@@ -415,7 +415,73 @@ function playTick(){
     o.stop(t + 0.08);
   }catch(e){}
 }
+function playConfirmDing(){
+  if(!soundOn) return;
+  try{
+    initAudio();
+    const t = audioCtx.currentTime;
 
+    // petit "ding" propre
+    const freqs = [880, 1174.66]; // A5 -> D6
+    freqs.forEach((f, i) => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t + i * 0.03);
+
+      g.gain.setValueAtTime(0.0001, t + i * 0.03);
+      g.gain.exponentialRampToValueAtTime(0.14, t + i * 0.03 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.03 + 0.12);
+
+      o.connect(g).connect(audioCtx.destination);
+      o.start(t + i * 0.03);
+      o.stop(t + i * 0.03 + 0.13);
+    });
+  }catch(e){}
+}
+
+function playRestartWhoosh(){
+  if(!soundOn) return;
+  try{
+    initAudio();
+    const t = audioCtx.currentTime;
+
+    // "woosh" doux (filtre qui descend) = vibe reset/restart
+    const noise = audioCtx.createBufferSource();
+    const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.18, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<data.length;i++){
+      data[i] = (Math.random()*2-1) * (1 - i/data.length); // décroissant
+    }
+    noise.buffer = buffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(1400, t);
+    filter.frequency.exponentialRampToValueAtTime(350, t + 0.18);
+
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.18, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.20);
+
+    noise.connect(filter).connect(g).connect(audioCtx.destination);
+    noise.start(t);
+    noise.stop(t + 0.20);
+
+    // petit "tap" final discret
+    const o = audioCtx.createOscillator();
+    const tg = audioCtx.createGain();
+    o.type = "triangle";
+    o.frequency.setValueAtTime(520, t + 0.14);
+    tg.gain.setValueAtTime(0.0001, t + 0.14);
+    tg.gain.exponentialRampToValueAtTime(0.10, t + 0.15);
+    tg.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+    o.connect(tg).connect(audioCtx.destination);
+    o.start(t + 0.14);
+    o.stop(t + 0.23);
+  }catch(e){}
+}
 function startTicking(){
   stopTicking();
 
@@ -873,11 +939,27 @@ function start(){
   updateHud();
   renderQuestion();
 
-  $("giveUpBtn").addEventListener("click", giveUp);
-  $("resetBtn").addEventListener("click", resetRun);
 
-  $("replayBtn").addEventListener("click", resetRun);
-  $("closeBtn").addEventListener("click", () => $("overlay").classList.remove("show"));
+  
+
+  $("replayBtn").addEventListener("click", ()=>{
+  playConfirmDing();
+  resetRun();
+});
+  $("giveUpBtn").addEventListener("click", ()=>{
+  playRestartWhoosh();
+  giveUp();
+});
+
+$("resetBtn").addEventListener("click", ()=>{
+  playRestartWhoosh();
+  resetRun();
+});
+
+$("closeBtn").addEventListener("click", ()=>{
+  playRestartWhoosh();
+  $("overlay").classList.remove("show");
+});
 
   $("soundBtn").addEventListener("click", (e)=>{
     e.stopPropagation();
